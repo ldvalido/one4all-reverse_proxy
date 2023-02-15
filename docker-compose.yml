@@ -29,6 +29,13 @@ services:
       - './secondary_api:/app'
     networks:
       - one4all-network
+  rabbitmq:
+      image: rabbitmq:3.11.8-management-alpine
+      ports: 
+      - 15672:15672
+      - 5672:5672
+      networks:
+      - one4all-network
 networks:
   one4all-network:
     driver: bridge

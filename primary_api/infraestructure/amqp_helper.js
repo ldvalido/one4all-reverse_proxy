@@ -37,9 +37,9 @@ amqp_helper = {
                 }
     
                 channel.assertQueue(queueName, { durable: true }, function(err, _ok) {
-                    if (closeOnErr(err)) return;
+                    //if (self.closeOnErr(err)) return;
                     // Consume incoming messages
-                    channel.consume(queue, fnConsumer, { noAck: false });
+                    channel.consume(queueName, fnConsumer, { noAck: false });
                     console.log("[AMQP] Worker is started");
                     });
                 }

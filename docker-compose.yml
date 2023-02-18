@@ -18,13 +18,17 @@ services:
     build: ./primary_api/
     container_name: ${PRIMARY_API_HOSTNAME}
     environment:
-    - IS_SYNC=${IS_SYNC}
+      - QUEUE_SERVER_HOSTNAME=${QUEUE_SERVER_HOSTNAME}
+      - IS_SYNC=${IS_SYNC}
+      - QUEUE_NAME=${QUEUE_NAME}
     ports:
       - '3001:3001'
     volumes:
       - './primary_api:/app'
     networks:
       - one4all-network
+    depends_on:
+      - rabbitmq
   secondary_api:
     build: ./secondary_api/
     container_name: ${SECONDARY_API_HOSTNAME}

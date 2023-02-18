@@ -7,13 +7,18 @@ services:
     volumes:
       - './one4all_webserver:/app'
     environment:
-      - PRIMARY_API_HOSTNAME=primary_api
-      - SECONDARY_API_HOSTNAME=secondary_api
+      - PRIMARY_API_HOSTNAME=${PRIMARY_API_HOSTNAME}
+      - SECONDARY_API_HOSTNAME=${SECONDARY_API_HOSTNAME}
+      - QUEUE_SERVER_HOSTNAME=${QUEUE_SERVER_HOSTNAME}
+      - IS_SYNC=${IS_SYNC}
+      - QUEUE_NAME=${QUEUE_NAME}
     networks:
       - one4all-network
   primary_api:
     build: ./primary_api/
-    container_name: primary_api
+    container_name: ${PRIMARY_API_HOSTNAME}
+    environment:
+    - IS_SYNC=${IS_SYNC}
     ports:
       - '3001:3001'
     volumes:
@@ -22,7 +27,9 @@ services:
       - one4all-network
   secondary_api:
     build: ./secondary_api/
-    container_name: secondary_api
+    container_name: ${SECONDARY_API_HOSTNAME}
+    environment:
+    - IS_SYNC=${IS_SYNC}
     ports:
       - '3002:3002'
     volumes:
@@ -31,6 +38,7 @@ services:
       - one4all-network
   rabbitmq:
       image: rabbitmq:3.11.8-management-alpine
+      container_name: ${QUEUE_SERVER_HOSTNAME}
       ports: 
       - 15672:15672
       - 5672:5672

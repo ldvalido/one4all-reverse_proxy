@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var amqp_helper = require('../infraestructure/amqp_helper.js')
+var amqp_helper = require('../../node-tools/amqp_helper.js')
 var sync = process.env.IS_SYNC == 1;
 var queue_hostName = process.env.QUEUE_SERVER_HOSTNAME
 var queue_queueName = process.env.QUEUE_NAME

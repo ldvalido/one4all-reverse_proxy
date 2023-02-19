@@ -37,15 +37,24 @@ function consume(queueHost, queueName, fnConsumer) {
                 throw error1;
             }
 
-            channel.assertQueue(queueName, { durable: true }, function(err, _ok) {
-                if (closeOnErr(err)) return;
-                // Consume incoming messages
-                channel.consume(queueName, fnConsumer, { noAck: false });
-                console.log("[AMQP] Worker is started");
+            channel.assertQueue(queueName, { durable: false }, function(err, _ok) {
+                    if (closeOnErr(err)) return;
+                    // Consume incoming messages
+                    channel.consume(queueName, processMsg, { noAck: false });
+                    console.log("[AMQP] Worker is started");
                 });
-            }
-        )});
-}
+                function processMsg(msg) {
+                    try {
+                        var res = fnConsumer.call(this, msg)
+                        res ? channel.ack(msg) : channel.reject(msg, true); 
+                    }
+                    catch (e) {
+                        channel.reject(msg,true);
+                    }
+                }
+            });
+        })
+    }
 
 
 module.exports = {publish:publish, consume:consume}

@@ -6,7 +6,7 @@ services:
       - '3000:3000'
     volumes:
       - './one4all_webserver:/app'
-      - './node-tools:/deps/node-tools'
+      - ./node-tools:/app/node_modules/node-tools
     environment:
       - PRIMARY_API_HOSTNAME=${PRIMARY_API_HOSTNAME}
       - SECONDARY_API_HOSTNAME=${SECONDARY_API_HOSTNAME}
@@ -23,7 +23,7 @@ services:
       - IS_SYNC=${IS_SYNC}
       - QUEUE_NAME=${QUEUE_NAME}
     ports:
-      - '3001:3001'
+      - '3001:3000'
     volumes:
     - ./primary_api:/app
     - ./node-tools:/app/node_modules/node-tools
@@ -37,7 +37,7 @@ services:
     environment:
     - IS_SYNC=${IS_SYNC}
     ports:
-      - '3002:3002'
+      - '3002:3000'
     volumes:
       - './secondary_api:/app'
     networks:

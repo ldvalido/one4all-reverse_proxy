@@ -17,7 +17,19 @@ router.get('/', function(req, res, next) {
       console.log("Secondary Api");
       request.get(`http://${secondary_api_hostname}:3000/users/`);
     }else{
-      nodetools.publish(process.env.QUEUE_SERVER_HOSTNAME,queueName,'exec');
+      sent = false;
+      for (i =0;i<3 && sent == false;i++){
+        try {
+          nodetools.publish(process.env.QUEUE_SERVER_HOSTNAME,queueName,'exec');  
+          sent = true;
+          if (i != 0){
+            console.log("Retry")
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      
     }
 
     res.send('Message created'); 

@@ -35,11 +35,14 @@ services:
     build: ./secondary_api/
     container_name: ${SECONDARY_API_HOSTNAME}
     environment:
-    - IS_SYNC=${IS_SYNC}
+      - QUEUE_SERVER_HOSTNAME=${QUEUE_SERVER_HOSTNAME}
+      - IS_SYNC=${IS_SYNC}
+      - QUEUE_NAME=${QUEUE_NAME}
     ports:
       - '3002:3000'
     volumes:
       - './secondary_api:/app'
+      - ./node-tools:/app/node_modules/node-tools
     networks:
       - one4all-network
   rabbitmq:

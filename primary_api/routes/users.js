@@ -19,8 +19,7 @@ function start(){
     console.log("Queue Host: "  + queue_hostName) ;
     console.log("Queue Name: " + queue_queueName);
     nodetools.consume(queue_hostName, queue_queueName, (msg) => {
-      //console.log(msg);
-      console.log(msg.content.toString());
+      console.log("Primary: " + msg.content.toString());
       return true;
     });
   }

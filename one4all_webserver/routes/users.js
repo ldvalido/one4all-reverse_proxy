@@ -2,6 +2,7 @@ var express = require('express');
 var request = require('request');
 var nodetools = require('node-tools')
 var router = express.Router();
+var retry = require('retry');
 
 var primary_api_hostname = process.env.PRIMARY_API_HOSTNAME
 var secondary_api_hostname = process.env.SECONDARY_API_HOSTNAME
@@ -17,19 +18,16 @@ router.get('/', function(req, res, next) {
       console.log("Secondary Api");
       request.get(`http://${secondary_api_hostname}:3000/users/`);
     }else{
-      sent = false;
-      for (i =0;i<3 && sent == false;i++){
-        try {
-          nodetools.publish(process.env.QUEUE_SERVER_HOSTNAME,queueName,'exec');  
-          sent = true;
-          if (i != 0){
-            console.log("Retry")
-          }
-        } catch (error) {
-          console.error(error)
-        }
-      }
-      
+      var operation = retry.operation({
+        retries: 3,
+        factor: 2,
+        minTimeout: 1000,
+        maxTimeout: 60 * 1000
+      });
+      operation.attempt(currentAttempt => {
+        console.log('Trying attempt #%d', currentAttempt);
+        nodetools.publish(process.env.QUEUE_SERVER_HOSTNAME,queueName,'exec');
+      });
     }
 
     res.send('Message created'); 
